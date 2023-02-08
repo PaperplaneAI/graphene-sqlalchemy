@@ -61,7 +61,7 @@ class Reporter(Base):
     favorite_article = relationship("Article", uselist=False)
 
     column_prop = column_property(
-        select([func.cast(func.count(id), Integer)]), doc="Column property"
+        select(func.cast(func.count(id), Integer)), doc="Column property"
     )
 
 

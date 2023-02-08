@@ -31,7 +31,7 @@ class RelationshipLoader(DataLoader):
         self.relationship_prop = relationship_prop
         self.selectin_loader = selectin_loader
 
-    async def batch_load_fn(self, parents):
+    async def batch_load_fn(self, parents, recursion_depth=None, execution_options=None):
         """
         Batch loads the relationships of all the parents as one SQL statement.
 
@@ -84,6 +84,9 @@ class RelationshipLoader(DataLoader):
                 None,
                 child_mapper,
                 None,
+                recursion_depth,
+                execution_options
+
             )
         else:
             self.selectin_loader._load_for_path(

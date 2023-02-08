@@ -6,6 +6,7 @@ import uuid
 from decimal import Decimal
 from typing import List, Optional
 
+import sqlalchemy
 from sqlalchemy import (
     Column,
     Date,
@@ -21,7 +22,8 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, column_property, composite, mapper, relationship
-from sqlalchemy.sql.sqltypes import _LookupExpressionAdapter
+#from sqlalchemy.sql.sqltypes import _LookupExpressionAdapter
+from sqlalchemy.sql.sqltypes import HasExpressionLookup
 from sqlalchemy.sql.type_api import TypeEngine
 
 PetKind = Enum("cat", "dog", name="pet_kind")
@@ -119,7 +121,7 @@ class Reporter(Base):
         return [1, 2, 3]
 
     column_prop = column_property(
-        select([func.cast(func.count(id), Integer)]), doc="Column property"
+        select(func.cast(func.count(id), Integer)), doc="Column property"
     )
 
     composite_prop = composite(
@@ -163,7 +165,8 @@ class ReflectedEditor(type):
 
 editor_table = Table("editors", Base.metadata, autoload=True)
 
-mapper(ReflectedEditor, editor_table)
+reg = sqlalchemy.orm.registry()
+reg.map_imperatively(ReflectedEditor, editor_table)
 
 
 ############################################
@@ -337,7 +340,7 @@ class Employee(Person):
 ############################################
 
 
-class CustomIntegerColumn(_LookupExpressionAdapter, TypeEngine):
+class CustomIntegerColumn(HasExpressionLookup, TypeEngine):
     """
     Custom Column Type that our converters don't recognize
     Adapted from sqlalchemy.Integer

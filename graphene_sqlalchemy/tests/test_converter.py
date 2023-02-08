@@ -460,7 +460,7 @@ def test_should_intenum_choice_convert_enum():
 
 def test_should_columproperty_convert():
     field = get_field_from_column(
-        column_property(select([func.sum(func.cast(id, types.Integer))]).where(id == 1))
+        column_property(select(func.sum(func.cast(id, types.Integer))).where(id == 1))
     )
 
     assert field.type == graphene.Int
